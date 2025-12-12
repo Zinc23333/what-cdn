@@ -266,7 +266,7 @@
         { 
             name: "Fastly", 
             color: "#FF4F56", 
-            check: (k, v) => k === 'fastly-restarts' || (k === 'via' && v.includes('fastly')) || k === 'x-served-by' 
+            check: (k, v) => k === 'fastly-restarts' || (k === 'via' && v.includes('fastly')) || (k === 'x-served-by') || (k === 'x-fastly-request-id') 
         },
         { 
             name: "Google Cloud CDN", 
@@ -313,7 +313,7 @@
         { 
             name: "GitHub Pages", 
             color: "#F0F6FC", 
-            check: (k, v) => v.includes('github.com') || v.includes('github-pages') 
+            check: (k, v) => v.includes('github.com') || v.includes('github-pages') || (k === 'x-github-request-id')
         },
         { 
             name: "Nginx Generic", 
