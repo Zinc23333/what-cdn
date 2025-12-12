@@ -3,18 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CDN 深度探测器</title>
+    <title>What CDN </title>
     <style>
         :root {
-            --bg-color: #0d1117;
-            --panel-bg: #161b22;
-            --text-primary: #c9d1d9;
+            --bg-color: #0f111a;
+            --panel-bg: #1a1d29;
+            --text-primary: #e6edf3;
             --text-secondary: #8b949e;
             --border-color: #30363d;
-            --accent-color: #58a6ff;
             --success-color: #238636;
-            --warning-color: #d29922;
-            --danger-color: #f85149;
+            --danger-color: #da3633;
         }
 
         body {
@@ -26,247 +24,342 @@
             padding: 20px;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
+        .container { max-width: 950px; margin: 0 auto; }
+        
+        /* 头部样式 */
+        .header-section { margin-bottom: 30px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; }
+        h1 { margin: 0; font-size: 1.8rem; background: linear-gradient(90deg, #58a6ff, #a371f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { color: var(--text-secondary); font-size: 0.9rem; margin-top: 5px; }
 
-        h1 { border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 30px; }
-
-        /* 输入区域样式 */
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-
-        input[type="text"] {
-            flex: 1;
-            padding: 12px;
-            background-color: var(--bg-color);
+        /* 输入框区域 */
+        .input-card {
+            background-color: var(--panel-bg);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            color: var(--text-primary);
-            font-size: 16px;
-            min-width: 200px;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
         }
+
+        .input-group { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+        
+        input[type="text"] {
+            flex: 1; padding: 14px 16px; background-color: #0d1117;
+            border: 1px solid #30363d; border-radius: 8px;
+            color: #fff; font-size: 16px; min-width: 250px;
+            outline: none; transition: border-color 0.2s;
+        }
+        input[type="text"]:focus { border-color: #58a6ff; }
 
         button {
-            background-color: var(--success-color);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 16px;
-            transition: opacity 0.2s;
+            background-color: #238636; color: white; border: none;
+            padding: 0 24px; border-radius: 8px; cursor: pointer;
+            font-weight: 600; font-size: 16px; transition: all 0.2s;
         }
-        button:hover { opacity: 0.9; }
-        button:disabled { background-color: var(--border-color); cursor: not-allowed; }
+        button:hover { background-color: #2ea043; transform: translateY(-1px); }
+        button:disabled { background-color: #30363d; cursor: not-allowed; transform: none; color: #8b949e; }
 
-        .options {
-            margin-bottom: 20px;
-            color: var(--text-secondary);
-            font-size: 0.9em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .toggle-label {
+            display: inline-flex; align-items: center; cursor: pointer;
+            color: var(--text-secondary); font-size: 0.9rem;
+            user-select: none;
         }
+        .toggle-label input { margin-right: 8px; width: 16px; height: 16px; accent-color: #58a6ff; }
 
-        /* 结果卡片 */
+        /* 结果区域 */
+        .result-section { display: none; animation: fadeIn 0.4s ease; }
+        .result-section.active { display: block; }
+
         .card {
             background-color: var(--panel-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 20px;
+            border-radius: 12px;
+            padding: 24px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
+        /* 徽章网格 */
+        .badge-grid { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 10px; }
+        
         .cdn-badge {
-            display: inline-flex;
-            align-items: center;
-            background-color: rgba(56, 139, 253, 0.15);
-            color: #58a6ff;
-            border: 1px solid rgba(56, 139, 253, 0.4);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-weight: bold;
-            margin-right: 10px;
-            margin-bottom: 10px;
-            font-size: 1.1em;
+            display: flex; flex-direction: column;
+            padding: 10px 16px;
+            border-radius: 8px;
+            border-left: 4px solid; /* 左侧品牌色条 */
+            background: rgba(255,255,255,0.03);
+            transition: transform 0.2s, background 0.2s;
+            min-width: 140px;
         }
-
-        .status-badge {
-            font-size: 0.8em;
-            padding: 2px 8px;
-            border-radius: 4px;
-            margin-left: 10px;
-            vertical-align: middle;
+        .cdn-badge:hover { transform: translateY(-2px); background: rgba(255,255,255,0.06); }
+        
+        .cdn-name { font-weight: 700; font-size: 1.05rem; margin-bottom: 4px; }
+        .cdn-meta { font-size: 0.75rem; opacity: 0.7; font-family: monospace; }
+        
+        .status-pill {
+            display: inline-block; padding: 4px 12px; border-radius: 20px;
+            font-size: 0.85rem; font-weight: bold; margin-left: 10px;
         }
-        .status-200 { background-color: var(--success-color); color: white; }
-        .status-err { background-color: var(--danger-color); color: white; }
+        .status-ok { background: rgba(35, 134, 54, 0.2); color: #3fb950; border: 1px solid rgba(35, 134, 54, 0.4); }
+        .status-fail { background: rgba(218, 54, 51, 0.2); color: #f85149; border: 1px solid rgba(218, 54, 51, 0.4); }
 
         /* 表格样式 */
+        .table-container { overflow-x: auto; }
         table {
-            width: 100%;
-            border-collapse: collapse;
+            width: 100%; border-collapse: collapse;
             font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-            font-size: 0.85em;
-            table-layout: fixed;
+            font-size: 0.85rem;
         }
+        th { text-align: left; padding: 12px; border-bottom: 2px solid var(--border-color); color: var(--text-secondary); }
+        td { padding: 10px 12px; border-bottom: 1px solid var(--border-color); word-break: break-all; }
+        tr:last-child td { border-bottom: none; }
         
-        th, td {
-            text-align: left;
-            padding: 10px;
-            border-bottom: 1px solid var(--border-color);
-        }
+        .trace-row { background-color: rgba(255, 255, 255, 0.04); }
         
-        th { color: var(--text-secondary); width: 35%; }
-        td { color: var(--text-primary); word-break: break-all; }
-        
-        .trace-row { background-color: rgba(210, 153, 34, 0.1); }
-        .trace-key { color: var(--warning-color); font-weight: bold; }
-
-        .hidden { display: none; }
-        #error-msg { color: var(--danger-color); margin-top: 10px; }
-        
-        /* Loading 动画 */
-        .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 8px;
-        }
+        /* 动画 */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner {
+            display: inline-block; width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+            border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; vertical-align: middle;
+        }
+        
+        #error-msg { color: #f85149; margin-top: 10px; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>📡 网页 CDN 穿透检测</h1>
+    <div class="header-section">
+        <h1>🔍 CDN 猎手 Ultimate</h1>
+        <div class="subtitle">支持识别 七牛云 / EdgeOne / 阿里云 / 华为云 / Cloudflare 等 30+ 种主流 CDN</div>
+    </div>
     
-    <div class="card">
+    <div class="input-card">
         <div class="input-group">
             <input type="text" id="target-url" placeholder="https://example.com" />
             <button id="btn-check" onclick="startCheck()">开始检测</button>
         </div>
         
-        <div class="options">
-            <label style="cursor: pointer; display: flex; align-items: center;">
-                <input type="checkbox" id="use-proxy"> 
-                <span style="margin-left: 6px;">开启跨域代理 (检测外部网站时必选)</span>
-            </label>
+        <div class="toggle-label">
+            <input type="checkbox" id="use-proxy"> 
+            <span>开启跨域代理模式 (检测外部网站如 baidu.com 时必选)</span>
         </div>
         <div id="error-msg"></div>
     </div>
 
-    <!-- 结果区域 -->
-    <div id="result-area" class="hidden">
-        
-        <!-- 概览 -->
+    <div id="result-area" class="result-section">
+        <!-- 概览卡片 -->
         <div class="card">
-            <h3 style="margin-top:0">检测结论 <span id="status-code"></span></h3>
-            <div id="cdn-tags">
-                <!-- JS 插入徽章 -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3 style="margin:0;">检测结果</h3>
+                <span id="status-code"></span>
             </div>
-            <div id="cdn-summary" style="color: var(--text-secondary); margin-top: 10px;"></div>
+            
+            <div id="cdn-badges" class="badge-grid"></div>
+            
+            <div id="cdn-summary" style="margin-top: 20px; font-size: 0.9rem; color: var(--text-secondary); border-top: 1px solid var(--border-color); padding-top: 15px;"></div>
         </div>
 
-        <!-- 详细 Header -->
+        <!-- 详细 Header 表格 -->
         <div class="card">
-            <h3 style="margin-top:0">原始响应头 (Headers)</h3>
-            <p style="font-size: 0.8em; color: var(--text-secondary)">黄色高亮行表示命中了已知 CDN 特征库</p>
-            <table id="header-table">
-                <thead>
-                    <tr>
-                        <th>Header Name</th>
-                        <th>Header Value</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+            <h3 style="margin-top:0; margin-bottom:15px;">原始响应头 (Raw Headers)</h3>
+            <div class="table-container">
+                <table id="header-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 35%">Header Name</th>
+                            <th>Header Value</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    // 初始化：默认填入当前 URL
+    // 默认填入当前 URL
     document.getElementById('target-url').value = window.location.href;
 
-    // CDN 特征库
-    const cdnSignatures = [
-        { name: "Cloudflare", check: (k, v) => v.includes('cloudflare') || k.includes('cf-ray') || k.includes('cf-cache-status') },
-        { name: "Vercel", check: (k, v) => v.includes('vercel') || k.includes('x-vercel') },
-        { name: "Netlify", check: (k, v) => v.includes('netlify') },
-        { name: "GitHub Pages", check: (k, v) => v.includes('github.com') || v.includes('github-pages') },
-        { name: "AWS CloudFront", check: (k, v) => k.includes('x-amz-cf') || (k === 'via' && v.includes('cloudfront')) },
-        { name: "Akamai", check: (k, v) => k.includes('akamai') || v.includes('akamai') },
-        { name: "Fastly", check: (k, v) => k.includes('fastly') || (k === 'via' && v.includes('fastly')) || k === 'x-served-by' },
-        { name: "Aliyun (阿里云)", check: (k, v) => k.includes('eagleid') || k.includes('aliyun') },
-        { name: "Tencent (腾讯云)", check: (k, v) => k.includes('x-daa-tunnel') || k.includes('x-nws-log') },
-        { name: "Gcore", check: (k, v) => k.includes('gcore') },
-        { name: "Azion", check: (k, v) => k.includes('azion') },
-        { name: "CacheFly", check: (k, v) => k.includes('cachefly') },
-        { name: "Sucuri", check: (k, v) => v.includes('sucuri') || k.includes('x-sucuri') },
-        { name: "Nginx", check: (k, v) => k === 'server' && v === 'nginx' } // 可能是通用服务器，也可能是自建CDN
+    /**
+     * CDN 数据库
+     * name: 显示名称
+     * color: 品牌主色 (用于左侧条和文字)
+     * check: 匹配逻辑 (k=key, v=value)
+     */
+    const cdnDatabase = [
+        // === 中国主流云厂商 ===
+        { 
+            name: "Qiniu Cloud (七牛云)", 
+            color: "#00C1DE", // 七牛青
+            check: (k, v) => k === 'x-qnm-cache' || k.startsWith('x-qiniu-') || k === 'x-reqid' 
+        },
+        { 
+            name: "Tencent EdgeOne", 
+            color: "#006EFF", // EdgeOne 亮蓝
+            check: (k, v) => k.startsWith('x-eo-') || k === 'eo-cache-status' || k === 'eo-log-uuid' 
+        },
+        { 
+            name: "Tencent Cloud (传统CDN)", 
+            color: "#0052D9", // 腾讯蓝
+            check: (k, v) => k === 'x-daa-tunnel' || k === 'x-nws-log-uuid' || k === 'x-cache-lookup' 
+        },
+        { 
+            name: "Aliyun (阿里云)", 
+            color: "#FF6A00", // 阿里橙
+            check: (k, v) => k === 'eagleid' || k.startsWith('x-swift-') || (k === 'via' && v.includes('kunlun')) 
+        },
+        { 
+            name: "Huawei Cloud (华为云)", 
+            color: "#C7000B", // 华为红
+            check: (k, v) => (k === 'via' && v.includes('huaweicloud')) || k.startsWith('x-hws-') 
+        },
+        { 
+            name: "Volcengine (火山引擎)", 
+            color: "#0E2C5B", // 字节蓝
+            check: (k, v) => k === 'x-tt-trace-id' || k === 'x-tt-logid' || (k === 'server' && v.includes('volc')) 
+        },
+        { 
+            name: "Baishan Cloud (白山云)", 
+            color: "#00A0E9", // 白山蓝
+            check: (k, v) => k.startsWith('x-bs-') || (k === 'via' && v.includes('baishan')) 
+        },
+        { 
+            name: "Wangsu (网宿科技)", 
+            color: "#1E50A2", // 网宿深蓝
+            check: (k, v) => k === 'ws-request-id' || (k === 'via' && v.includes('ws-')) 
+        },
+        { 
+            name: "Kingsoft Cloud (金山云)", 
+            color: "#D42020", // 金山红
+            check: (k, v) => k.includes('ks-cdn') || (k === 'server' && v === 'ksc') 
+        },
+        { 
+            name: "UCloud", 
+            color: "#0064C8", 
+            check: (k, v) => k.startsWith('x-ucloud') 
+        },
+        { 
+            name: "Baidu Yunjiasu", 
+            color: "#2932E1", 
+            check: (k, v) => k.startsWith('x-yunjiasu') || (k === 'server' && v === 'yunjiasu-nginx') 
+        },
+
+        // === 国际巨头 ===
+        { 
+            name: "Cloudflare", 
+            color: "#F38020", 
+            check: (k, v) => v.includes('cloudflare') || k === 'cf-ray' || k === 'cf-cache-status' 
+        },
+        { 
+            name: "AWS CloudFront", 
+            color: "#FF9900", 
+            check: (k, v) => k.startsWith('x-amz-cf') || (k === 'via' && v.includes('cloudfront')) 
+        },
+        { 
+            name: "Akamai", 
+            color: "#FF5F00", 
+            check: (k, v) => k.includes('akamai') || v.includes('akamai') 
+        },
+        { 
+            name: "Fastly", 
+            color: "#FF4F56", 
+            check: (k, v) => k === 'fastly-restarts' || (k === 'via' && v.includes('fastly')) || k === 'x-served-by' 
+        },
+        { 
+            name: "Google Cloud CDN", 
+            color: "#4285F4", 
+            check: (k, v) => (k === 'via' && v.includes('google')) || k.startsWith('x-goog-') 
+        },
+        { 
+            name: "Microsoft Azure", 
+            color: "#0078D4", 
+            check: (k, v) => k.startsWith('x-azure-') 
+        },
+        { 
+            name: "Edgio (Edgecast)", 
+            color: "#005696", 
+            check: (k, v) => k.includes('ec-server') || (k === 'server' && v === 'ecs') 
+        },
+        
+        // === 平台 & 垂直厂商 ===
+        { 
+            name: "Vercel", 
+            color: "#FFFFFF", 
+            check: (k, v) => v.includes('vercel') || k.startsWith('x-vercel') 
+        },
+        { 
+            name: "Netlify", 
+            color: "#00C7B7", 
+            check: (k, v) => v.includes('netlify') || k === 'x-nf-request-id' 
+        },
+        { 
+            name: "BunnyCDN", 
+            color: "#FD7E14", 
+            check: (k, v) => v.includes('bunnycdn') || k === 'cdn-pullzone' 
+        },
+        { 
+            name: "Gcore", 
+            color: "#6633CC", 
+            check: (k, v) => k.includes('gcore') 
+        },
+        { 
+            name: "Imperva (Incapsula)", 
+            color: "#ED207B", 
+            check: (k, v) => k === 'x-iinfo' || (k === 'x-cdn' && v.includes('incapsula')) 
+        },
+        { 
+            name: "GitHub Pages", 
+            color: "#F0F6FC", 
+            check: (k, v) => v.includes('github.com') || v.includes('github-pages') 
+        },
+        { 
+            name: "Nginx Generic", 
+            color: "#009639", 
+            check: (k, v) => k === 'server' && v === 'nginx' 
+        }
     ];
+
+    // 辅助：Hex 转 RGBA
+    function hexToRgba(hex, alpha) {
+        let r = parseInt(hex.slice(1, 3), 16),
+            g = parseInt(hex.slice(3, 5), 16),
+            b = parseInt(hex.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
 
     async function startCheck() {
         const urlInput = document.getElementById('target-url');
         const useProxy = document.getElementById('use-proxy').checked;
         const btn = document.getElementById('btn-check');
         const errorDiv = document.getElementById('error-msg');
-        const resultArea = document.getElementById('result-area');
+        const resultSection = document.getElementById('result-area');
         
-        // 重置 UI
-        errorDiv.innerText = '';
-        resultArea.classList.add('hidden');
+        // 重置状态
+        errorDiv.innerHTML = '';
+        resultSection.classList.remove('active');
         btn.disabled = true;
-        btn.innerHTML = '<span class="spinner"></span> 检测中...';
+        btn.innerHTML = '<span class="spinner"></span> 正在探测...';
 
         let targetUrl = urlInput.value.trim();
-        if (!targetUrl.startsWith('http')) {
-            targetUrl = 'https://' + targetUrl;
-            urlInput.value = targetUrl;
-        }
+        if (!targetUrl.startsWith('http')) targetUrl = 'https://' + targetUrl;
 
-        // 判断是否是同一域名
-        const isSameOrigin = targetUrl.startsWith(window.location.origin);
-        
-        // 如果检测外部网站且没开代理，提示警告（但仍尝试请求，因为可能对方开了 CORS）
-        if (!isSameOrigin && !useProxy) {
-            console.warn("尝试直接访问外部 URL，可能会因 CORS 失败。");
-        }
-
-        // 构造请求 URL
-        // 注意：corsproxy.io 是一个公共代理，仅用于演示。生产环境建议自建 Worker。
+        // 构造请求
         const fetchUrl = useProxy 
             ? `https://corsproxy.io/?${encodeURIComponent(targetUrl)}` 
             : targetUrl;
 
         try {
-            const response = await fetch(fetchUrl, {
-                method: 'GET',
-                cache: 'no-cache', // 强制获取最新
-                mode: 'cors'
-            });
-
-            // 处理结果
+            const response = await fetch(fetchUrl, { method: 'GET', cache: 'no-cache', mode: 'cors' });
             renderResults(response, useProxy);
-            
         } catch (err) {
-            let msg = err.message;
-            if (msg.includes('Failed to fetch')) {
-                msg = `❌ 请求被拦截 (CORS 错误)。<br>原因：目标网站禁止了跨域访问。<br><b>解决办法：请勾选“开启跨域代理”重试。</b>`;
+            if (err.message.includes('Failed to fetch') && !useProxy) {
+                errorDiv.innerHTML = `⚠️ <b>CORS 错误</b>：无法直接读取该网站 Header。<br>请勾选 <b>“开启跨域代理模式”</b> 后重试。`;
+            } else {
+                errorDiv.innerText = `请求失败: ${err.message}`;
             }
-            errorDiv.innerHTML = msg;
         } finally {
             btn.disabled = false;
             btn.innerText = '开始检测';
@@ -274,79 +367,82 @@
     }
 
     function renderResults(response, usedProxy) {
-        const resultArea = document.getElementById('result-area');
+        const resultSection = document.getElementById('result-area');
+        const badgesDiv = document.getElementById('cdn-badges');
         const tableBody = document.querySelector('#header-table tbody');
-        const cdnTagsDiv = document.getElementById('cdn-tags');
         const summaryDiv = document.getElementById('cdn-summary');
-        const statusCodeSpan = document.getElementById('status-code');
+        const statusCode = document.getElementById('status-code');
 
-        tableBody.innerHTML = '';
-        cdnTagsDiv.innerHTML = '';
+        // 1. 设置状态码
+        const statusClass = response.ok ? 'status-ok' : 'status-fail';
+        statusCode.innerHTML = `<span class="status-pill ${statusClass}">${response.status} ${response.statusText}</span>`;
+
+        // 2. 收集数据
+        const detected = [];
+        const rows = [];
         
-        // 状态码
-        statusCodeSpan.innerHTML = `<span class="status-badge ${response.ok ? 'status-200' : 'status-err'}">${response.status} ${response.statusText}</span>`;
-
-        const foundCDNs = new Set();
-        const headersList = [];
-
-        // 提取 Header
         for (const [key, value] of response.headers.entries()) {
-            headersList.push({ key, value });
+            const k = key.toLowerCase();
+            const v = value.toLowerCase();
             
-            // 检测 CDN 特征
-            cdnSignatures.forEach(sig => {
-                if (sig.check(key.toLowerCase(), value.toLowerCase())) {
-                    foundCDNs.add(sig.name);
+            // 匹配 CDN
+            let match = null;
+            cdnDatabase.forEach(cdn => {
+                if (cdn.check(k, v)) {
+                    if (!detected.find(d => d.name === cdn.name)) {
+                        detected.push({ ...cdn, trigger: key }); // 记录触发的 key
+                    }
+                    match = cdn;
                 }
             });
+
+            rows.push({ key, value, match });
         }
         
-        // 如果使用了代理，Server 头通常会被代理覆盖，需要剔除误报
-        // corsproxy.io 有时会保留原 server 头，有时不会，这里简单处理：
-        // 如果使用了代理，且检测结果只有 Cloudflare（因为 corsproxy 跑在 CF 上），提示可能不准确
-        if (usedProxy && foundCDNs.has('Cloudflare') && foundCDNs.size === 1) {
-            // 这里不做硬性移除，但在说明里提示
-        }
-
-        // 渲染徽章
-        if (foundCDNs.size > 0) {
-            foundCDNs.forEach(cdn => {
-                const badge = document.createElement('span');
+        // 3. 渲染徽章
+        badgesDiv.innerHTML = '';
+        if (detected.length > 0) {
+            detected.forEach(cdn => {
+                const badge = document.createElement('div');
                 badge.className = 'cdn-badge';
-                badge.innerText = cdn;
-                cdnTagsDiv.appendChild(badge);
+                badge.style.borderColor = cdn.color; // 左侧条颜色
+                badge.innerHTML = `
+                    <span class="cdn-name" style="color: ${cdn.color}">${cdn.name}</span>
+                    <span class="cdn-meta">Hit: ${cdn.trigger}</span>
+                `;
+                badgesDiv.appendChild(badge);
             });
         } else {
-            cdnTagsDiv.innerHTML = '<span style="color:#888">未检测到知名 CDN 特征，或 Header 被清洗。</span>';
+            badgesDiv.innerHTML = '<div style="color:#666; font-style:italic;">未识别到已知 CDN 特征，可能是自建源站或 Header 被清洗。</div>';
         }
 
-        // 渲染总结文字
-        if (usedProxy) {
-            summaryDiv.innerHTML = "⚠️ <b>注意：</b>使用了代理模式。部分 Header (如 Server) 可能来自代理服务器本身而非目标源站。请重点关注 X-Cache, Via 等穿透性字段。";
-        } else {
-            summaryDiv.innerHTML = "✅ 直连模式：检测结果具有最高准确性。";
-        }
-
-        // 渲染表格
-        headersList.sort((a, b) => a.key.localeCompare(b.key));
-        headersList.forEach(h => {
-            const row = document.createElement('tr');
-            const k = h.key.toLowerCase();
-            const v = h.value.toLowerCase();
-            
-            // 判断是否是痕迹
-            let isTrace = cdnSignatures.some(sig => sig.check(k, v));
-            
-            if (isTrace) {
-                row.className = 'trace-row';
-                row.innerHTML = `<td class="trace-key">${h.key}</td><td>${h.value}</td>`;
+        // 4. 渲染表格
+        tableBody.innerHTML = '';
+        rows.sort((a, b) => a.key.localeCompare(b.key));
+        rows.forEach(row => {
+            const tr = document.createElement('tr');
+            if (row.match) {
+                tr.className = 'trace-row';
+                // 命中的行，Key 变色，背景微亮
+                tr.style.backgroundColor = hexToRgba(row.match.color, 0.08);
+                tr.innerHTML = `
+                    <td style="color: ${row.match.color}; font-weight:bold;">${row.key}</td>
+                    <td>${row.value}</td>
+                `;
             } else {
-                row.innerHTML = `<td>${h.key}</td><td>${h.value}</td>`;
+                tr.innerHTML = `<td>${row.key}</td><td>${row.value}</td>`;
             }
-            tableBody.appendChild(row);
+            tableBody.appendChild(tr);
         });
 
-        resultArea.classList.remove('hidden');
+        // 5. 总结提示
+        if (usedProxy) {
+            summaryDiv.innerHTML = "⚠️ <b>代理模式提示</b>：由于经过了 CORS 代理，部分 Header (如 Server: cloudflare) 可能是代理服务器本身的特征。请优先关注 X-Qnm, X-Swift, X-Eo 等厂商前缀字段。";
+        } else {
+            summaryDiv.innerHTML = "✅ <b>直连模式</b>：当前结果准确反映了客户端与目标服务器的直接链路。";
+        }
+
+        resultSection.classList.add('active');
     }
 </script>
 
