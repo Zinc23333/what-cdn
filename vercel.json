@@ -1,8 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/:match*",
-      "destination": "https://zinc23333.github.io/what-cdn/:match*"
+      "source": "/(.*)",
+      "destination": "https://zinc23333.github.io/what-cdn/$1"
     }
   ]
 }
