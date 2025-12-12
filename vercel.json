@@ -1,5 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/(.*)", "destination": "https://zinc23333.github.io/$1" }
-  ]
-}
