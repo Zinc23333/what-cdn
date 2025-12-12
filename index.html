@@ -345,10 +345,12 @@
 
         let targetUrl = urlInput.value.trim();
         if (!targetUrl.startsWith('http')) targetUrl = 'https://' + targetUrl;
+        
+        const MY_WORKER_URL = "https://what-cdn-api.zinc233.top/";
 
         // 构造请求
         const fetchUrl = useProxy 
-            ? `https://corsproxy.io/?${encodeURIComponent(targetUrl)}` 
+            ? `${MY_WORKER_URL}?url=${encodeURIComponent(targetUrl)}` 
             : targetUrl;
 
         try {
