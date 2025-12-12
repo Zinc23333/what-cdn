@@ -1,8 +1,0 @@
-{
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "https://zinc23333.github.io/what-cdn/$1"
-    }
-  ]
-}
